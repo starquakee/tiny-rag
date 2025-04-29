@@ -34,8 +34,8 @@ def query_search(config_path):
     tiny_rag = TinyRAG(config=rag_config)
     logger.info("tiny rag init success!")
     tiny_rag.load()
-    query = "请介绍一下北京"
-    output = tiny_rag.search(query, top_n=6)
+    query = "请简单介绍一下成都"
+    output = tiny_rag.search(query, top_n=4)
     print("output: ", output)
 
 def main():

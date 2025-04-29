@@ -49,7 +49,7 @@ class PDFParser(BaseParser):
         pdf_doc: fitz.Document = fitz.open(self.file_path)
         
         raw_text: str = ""
-        page_text: List(int, str) = []
+        page_text: List[int, str] = []
         for pageno, page in enumerate(pdf_doc):
             page: fitz.Page
             raw_text = page.get_text("text")

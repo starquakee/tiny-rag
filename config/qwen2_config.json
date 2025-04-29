@@ -1,11 +1,12 @@
 {
     "base_dir": "data/wiki_db",
-    "llm_model_id": "models/tiny_llm_sft_92m",
+    "llm_model_id": "models/qwen2",
     "emb_model_id": "models/bge-small-zh-v1.5",
     "ranker_model_id": "models/bge-reranker-base",
-    "device": "cpu",
+    "device": "cuda",
     "sent_split_model_id": "models/nlp_bert_document-segmentation_chinese-base",
     "sent_split_use_model": false,
     "sentence_size": 256,
-    "model_type": "qwen2"
+    "model_type": "qwen2",
+    "max_new_tokens": 1024
 }
