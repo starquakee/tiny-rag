@@ -3,6 +3,7 @@ import pickle
 import jieba
 from tqdm import tqdm
 from typing import List, Any, Tuple
+from loguru import logger
 
 from tinyrag.searcher.bm25_recall.rank_bm25 import BM25Okapi
 
@@ -16,13 +17,23 @@ class BM25Retriever:
         if not os.path.exists(self.base_dir):
             os.makedirs(self.base_dir, exist_ok=True)
 
+        # 如果传入了数据，直接构建
         if len(self.data_list) != 0:
             self.build(self.data_list)
-            # 初始化 BM25Okapi 实例
-            # self.bm25 = BM25Okapi(self.tokenized_corpus)
-            print("初始化数据库！ ")
+            logger.info("bm25 retriever initialized from in-memory data.")
         else:
-            print("未初始化数据库，请加载数据库！ ")
+            # 未传入数据时，尝试自动加载已有的持久化数据；若不存在则静默等待后续 load_db()
+            db_file_path = os.path.join(self.base_dir, "bm25_data.pkl")
+            if os.path.exists(db_file_path):
+                try:
+                    self.load_bm25_data()
+                    logger.info("bm25 retriever auto-loaded from {}", db_file_path)
+                except Exception as e:
+                    logger.warning("bm25 auto-load failed: {}. Will wait for explicit load_db().", e)
+                    self.bm25 = None
+            else:
+                # 正常流程中，Searcher.load_db() 会随后调用，这里不再打印误导性的提示
+                self.bm25 = None
         
     def build(self, txt_list: List[str]):
         self.data_list = txt_list
@@ -69,8 +80,8 @@ class BM25Retriever:
     def search(self, query: str, top_n=5) -> List[Tuple[int, str, float]]:
         """ 使用BM25算法检索最相似的文本。
         """
-        if self.tokenized_corpus is None:
-            raise ValueError("Tokenized corpus is not loaded or generated.")
+        if getattr(self, "bm25", None) is None:
+            raise ValueError("BM25 is not ready. Please call load_bm25_data() or build() before search.")
 
         tokenized_query = self.tokenize(query)
         scores = self.bm25.get_scores(tokenized_query)

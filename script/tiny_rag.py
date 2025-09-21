@@ -34,13 +34,13 @@ def query_search(config_path):
     tiny_rag = TinyRAG(config=rag_config)
     logger.info("tiny rag init success!")
     tiny_rag.load()
-    query = "请简单介绍一下成都"
+    query = "你觉得中国ACG文化如何"
     output = tiny_rag.search(query, top_n=4)
     print("output: ", output)
 
 def main():
     parser = argparse.ArgumentParser(description='Tiny RAG Argument Parser')
-    parser.add_argument("-c", '--config', type=str, default="config/qwen2_config.json", help='Tiny RAG config')
+    parser.add_argument("-c", '--config', type=str, default="../config/qwen2_config.json", help='Tiny RAG config')
     parser.add_argument("-t", '--type', type=str, default="search", help='Tiny RAG Type [build, search]')
     parser.add_argument('-p', "--path",  type=str, default="data/raw_data/wikipedia-cn-20230720-filtered.json", help='Tiny RAG data path')
 
@@ -53,4 +53,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # python script/tiny_rag.py -t search -c config/qwen2_config.json
 
